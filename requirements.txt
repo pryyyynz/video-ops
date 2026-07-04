@@ -1,0 +1,18 @@
+# Step 1 (scoreboard OCR). easyocr pulls in torch/torchvision (CPU build is fine here).
+opencv-python
+easyocr
+numpy
+pillow
+
+# Captioning (caption.py) + LLM recap talks to Ollama over HTTP (stdlib, no dep).
+transformers
+
+# Commentary transcription (asr.py). GPU build of torch is installed separately
+# from the cu128 index for the RTX 5060 (Blackwell): see README.
+openai-whisper
+
+# Data sourcing (download.py). SoccerNet SDK is optional — install separately when needed.
+yt-dlp
+
+# Web frontend (app.py + src/pipeline.py)
+flask

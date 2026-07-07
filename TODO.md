@@ -63,6 +63,25 @@ Develop on a **5-10 min clip** first; scale to a full match only once the spine 
 - [x] **Two-pass score:** recap asks the model the final score first, so the count is pinned
       without any manual input (uploads no longer anchor to garbage OCR).
 
+## v6 - video toolbox: 4 new tasks + multitask frontend (done)
+- [x] **Frontend:** grouped task picker (Summarise / Captions / Highlights), multi-task runs,
+      input video preview (upload / YouTube embed / direct link), per-task result cards with
+      downloads, incremental results + per-task progress chips.
+- [x] **Task pipeline (pipeline.run_tasks):** shared steps run once per job (download -> asr ->
+      fuse -> scene captions), then per-task finishers cheap-first; task_done streams results.
+- [x] **Highlights cutter (highlights.py):** score changes always kept (-20s/+10s pads), rest
+      ranked by crowd surge + commentary keywords; ffmpeg cut + concat (re-encode, clean joins);
+      cutlist.json feeds the UI. Validated on morocco_norway (both goals + red card in 96s reel).
+- [x] **Subtitles:** transcript segments -> SRT/VTT (formatted + served by app.py per task).
+- [x] **Visual captions (visual_captions.py):** ffmpeg scene detect (0.30 thresh, 8s min gap,
+      30-scene cap, fixed-grid fallback) -> gemma3:12b VISION via Ollama - supersedes the BLIP
+      plan; reads player names off jerseys on the test clip.
+- [x] **Generic summary (summarise.py):** transcript-led; pipeline auto-adds scene captions when
+      the transcript is sparse (<200 words) so near-silent videos still summarise.
+- [x] **llm.py:** shared Ollama client (text + images); recap.py now uses it.
+- [ ] Step caching: asr/fuse re-run every job even when artifacts exist for the same video.
+- [ ] Per-task error isolation: one task failing currently fails the whole multi-task job.
+
 ## Polish / next
 - [x] Goal-count/names: root cause is TRANSCRIPT quality, not the recap model. Man Utd with the
       medium transcript -> correct 4-4 (8 goals), real scorers (Jelavic, Pienaar, Welbeck, Rooney).

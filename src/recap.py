@@ -14,11 +14,10 @@ Usage:
 import argparse
 import json
 import re
-import urllib.request
 
 import config
+import llm
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
 # gemma3:12b - richer and better at instruction-following than the 8B models
 # (~60s/recap; partial CPU offload on 8GB). Transcript quality still drives the
 # goal-count and name accuracy more than the recap model does.
@@ -90,16 +89,7 @@ def format_commentary(segments):
 
 
 def ask_ollama(prompt, model=MODEL):
-    req = urllib.request.Request(
-        OLLAMA_URL,
-        data=json.dumps({
-            "model": model, "prompt": prompt, "stream": False, "think": False,
-            "options": {"num_ctx": NUM_CTX, "temperature": 0.1},
-        }).encode(),
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=900) as r:
-        return json.loads(r.read())["response"].strip()
+    return llm.ask(prompt, model, num_ctx=NUM_CTX)
 
 
 FINAL_PROMPT = """Read the football commentary below and work out the final score.
